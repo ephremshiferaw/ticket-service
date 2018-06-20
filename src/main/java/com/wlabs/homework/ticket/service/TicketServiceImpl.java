@@ -46,9 +46,12 @@ public class TicketServiceImpl implements TicketService {
 	 */
 	@Override
 	public int numSeatsAvailable() {
-		log.debug("returning number of seats available for venue");
 		Venue venue = ticketRepository.findVenueById(1);
 		Map<Integer, SeatHold> activeSeatHolds = findActiveSeatHolds(1);
+		if (log.isDebugEnabled()) {
+			log.debug("venueId: " + venue.getId() + " -venueNumSeats: " + venue.getNumSeats() + " -activeSeatHolds: "
+					+ activeSeatHolds.size());
+		}
 		int seatsAvailable = venue.getNumSeats() - activeSeatHolds.size();
 		return seatsAvailable;
 	}
@@ -94,17 +97,22 @@ public class TicketServiceImpl implements TicketService {
 			seatHold.setHoldId(holdId);
 		}
 		seatHold.setAssociatedSeats(bestSeatsAvailable);
+		if (log.isDebugEnabled()) {
+			log.debug("seatHoldId: " + seatHold.getHoldId() + " -customerEmail: " + customerEmail + " -seatsHeld: "
+					+ bestSeatsAvailable);
+		}
 		return seatHold;
 	}
 
 	/**
-	 * Commit seats held for a specific customer and archive older expired seat holds
+	 * Commit seats held for a specific customer and archive older expired seat
+	 * holds
 	 *
 	 * @param seatHoldId
 	 *            the int seat hold identifier
 	 * @param customerEmail
-	 *            the {@link String} email address of the customer to which the seat hold is
-	 *            assigned
+	 *            the {@link String} email address of the customer to which the seat
+	 *            hold is assigned
 	 * @return a {@link String} reservation confirmation code
 	 */
 	@Override
@@ -130,6 +138,10 @@ public class TicketServiceImpl implements TicketService {
 			seatHold.setReservationId(reservationId);
 			seatHold.setConfirmed(true);
 			ticketRepository.saveSeatHold(seatHold);
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("reservationId: " + reservationId + " -seatHoldId: " + customerSeatHolds.get(0).getHoldId()
+					+ " -customerEmail: " + customerEmail + " -numSeatsReserved: " + customerSeatHolds.size());
 		}
 		return reservationId;
 	}
@@ -165,6 +177,7 @@ public class TicketServiceImpl implements TicketService {
 			if (activeSeatHolds.get(i) == null) {
 				seat = new Seat();
 				seat.setNumber(i);
+				seat.setVenueId(1);
 				bestSeatsAvailable.add(seat);
 			}
 			if (bestSeatsAvailable.size() == numSeats) {

@@ -23,6 +23,7 @@ public class TicketRepositoryImpl implements TicketRepository {
 		super();
 		// for homework create and populate test Venue
 		venue = new Venue();
+		venue.setId(1);
 		venue.setNumSeats(100);
 	}
 
