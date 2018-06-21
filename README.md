@@ -55,6 +55,13 @@ Execute the following from the project root directory (ticket-service/):
 $ java -jar target/ticket-service-0.0.1-SNAPSHOT.jar
 
 
+## Configuration
+
+Seat hold expiration and archival setting are configured in application.properties.
+
+By default seat holds will expire after 60 seconds and seat holds will be archived (for purpose of assignment removed from repository) after 300 seconds.
+
+
 ## Logging
 
 Apache Log4j 2 is configured and used. With the default configuration the following log file will be created, populated, and managed:
