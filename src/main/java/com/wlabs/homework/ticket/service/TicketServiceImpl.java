@@ -122,13 +122,13 @@ public class TicketServiceImpl implements TicketService {
 			// SeatHoldNotFoundException could be thrown here if permitted
 			return reservationId = "-1";
 		}
-		if (!customerSeatHolds.get(0).getCustomer().getEmail().equals(customerEmail)) {
-			// InvalidSeatHoldCustomerEmailException could be thrown here if permitted
-			return reservationId = "-2";
-		}
 		if (isSeatHoldExpired(customerSeatHolds.get(0))) {
 			// SeatHoldExpiredException could be thrown here if permitted
 			return reservationId = "-3";
+		}
+		if (!customerSeatHolds.get(0).getCustomer().getEmail().equals(customerEmail)) {
+			// InvalidSeatHoldCustomerEmailException could be thrown here if permitted
+			return reservationId = "-2";
 		}
 		Instant now = Instant.now();
 		reservationId = Integer.toString(new Random().nextInt() & Integer.MAX_VALUE);
