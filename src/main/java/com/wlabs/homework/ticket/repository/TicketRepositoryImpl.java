@@ -21,16 +21,19 @@ public class TicketRepositoryImpl implements TicketRepository {
 
 	public TicketRepositoryImpl() {
 		super();
-		// for homework create and populate test Venue
+		// hard coded for assignment - create and populate test Venue
 		venue = new Venue();
 		venue.setId(1);
 		venue.setNumSeats(100);
 	}
 
 	/**
-	 * Save seat hold
-	 *
+	 * Delete seat hold
+	 * 
+	 * @param seatHoldKey
+	 *            the seat hold key
 	 */
+	@Override
 	public void deleteSeatHold(Integer seatHoldKey) {
 		seatHolds.remove(seatHoldKey);
 	}
@@ -38,6 +41,8 @@ public class TicketRepositoryImpl implements TicketRepository {
 	/**
 	 * Find venue by Id
 	 *
+	 * @param id
+	 *            the venue Id
 	 * @return the venue
 	 */
 	@Override
@@ -48,7 +53,9 @@ public class TicketRepositoryImpl implements TicketRepository {
 	/**
 	 * Find all seat holds
 	 *
-	 * @return all seat holds
+	 * @param venueId
+	 *            the venue Id
+	 * @return Map of all seat holds for a venue
 	 */
 	@Override
 	public Map<Integer, SeatHold> findAllSeatHoldsByVenueId(long venueId) {
@@ -58,6 +65,8 @@ public class TicketRepositoryImpl implements TicketRepository {
 	/**
 	 * Save seat hold
 	 *
+	 * @param seatHold
+	 *            the seat hold
 	 */
 	@Override
 	public void saveSeatHold(SeatHold seatHold) {

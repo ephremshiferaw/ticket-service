@@ -42,7 +42,7 @@ public class TicketServiceImpl implements TicketService {
 	/**
 	 * The number of seats in the venue that are neither held nor reserved
 	 *
-	 * @return the int number of tickets available in the venue
+	 * @return the number of tickets available in the venue
 	 */
 	@Override
 	public int numSeatsAvailable() {
@@ -60,11 +60,10 @@ public class TicketServiceImpl implements TicketService {
 	 * Find and hold the best seats available for a customer
 	 *
 	 * @param numSeats
-	 *            the int number of seats to find and hold
+	 *            the number of seats to find and hold
 	 * @param customerEmail
-	 *            the {@link SeatHold} unique identifier for the customer
-	 * @return a {@link SeatHold} object identifying the specific seats and related
-	 *         information
+	 *            the unique identifier for the customer
+	 * @return a SeatHold identifying the specific seats and related information
 	 */
 	@Override
 	synchronized public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
@@ -109,11 +108,11 @@ public class TicketServiceImpl implements TicketService {
 	 * holds
 	 *
 	 * @param seatHoldId
-	 *            the int seat hold identifier
+	 *            the seat hold Id
 	 * @param customerEmail
-	 *            the {@link String} email address of the customer to which the seat
-	 *            hold is assigned
-	 * @return a {@link String} reservation confirmation code
+	 *            the email address of the customer to which the seat hold is
+	 *            assigned
+	 * @return a reservation confirmation code
 	 */
 	@Override
 	public String reserveSeats(int seatHoldId, String customerEmail) {
@@ -146,6 +145,13 @@ public class TicketServiceImpl implements TicketService {
 		return reservationId;
 	}
 
+	/**
+	 * Returns the active seat holds for a venue
+	 *
+	 * @param venueId
+	 *            the venue Id
+	 * @return a Map identifying the SeatHold specific seats and related information
+	 */
 	private Map<Integer, SeatHold> findActiveSeatHolds(int venueId) {
 		Map<Integer, SeatHold> seatHolds = ticketRepository.findAllSeatHoldsByVenueId(1);
 		Map<Integer, SeatHold> activeSeatHolds = new HashMap<Integer, SeatHold>();
@@ -170,6 +176,15 @@ public class TicketServiceImpl implements TicketService {
 		return activeSeatHolds;
 	}
 
+	/**
+	 * Returns the best seats available
+	 *
+	 * @param numSeats
+	 *            the number of seats requested
+	 * @param venueNumSeats
+	 *            the number of seats in the venue
+	 * @return a List containing the best seats available
+	 */
 	private List<Seat> findBestSeatsAvailable(int numSeats, int venueNumSeats, Map<Integer, SeatHold> activeSeatHolds) {
 		List<Seat> bestSeatsAvailable = new ArrayList<Seat>();
 		Seat seat;
@@ -187,6 +202,13 @@ public class TicketServiceImpl implements TicketService {
 		return bestSeatsAvailable;
 	}
 
+	/**
+	 * Returns a customer's seat hold information
+	 *
+	 * @param holdId
+	 *            the hold Id
+	 * @return a List containing the seat hold information
+	 */
 	private List<SeatHold> findCustomerSeatHoldsByHoldId(int holdId) {
 		Map<Integer, SeatHold> seatHolds = ticketRepository.findAllSeatHoldsByVenueId(1);
 		List<SeatHold> customerSeatHolds = new ArrayList<SeatHold>();
@@ -198,6 +220,15 @@ public class TicketServiceImpl implements TicketService {
 		return customerSeatHolds;
 	}
 
+	/**
+	 * Returns boolean indicating if customer has existing active seat hold
+	 *
+	 * @param customer
+	 *            the Customer
+	 * @param activeSeatHolds
+	 *            the active seat holds for a venue
+	 * @return a boolean indicating if customer has a seat hold
+	 */
 	private boolean isExistingSeatHoldForCustomer(Customer customer, Map<Integer, SeatHold> activeSeatHolds) {
 		for (Map.Entry<Integer, SeatHold> activeSeatHold : activeSeatHolds.entrySet()) {
 			if (activeSeatHold.getValue().getCustomer().getEmail().equals(customer.getEmail())) {
@@ -209,16 +240,37 @@ public class TicketServiceImpl implements TicketService {
 		return false;
 	}
 
+	/**
+	 * Returns boolean indicating if the seat hold should be archived
+	 *
+	 * @param seatHold
+	 *            the SeatHold
+	 * @return a boolean indicating if the seat hold should be archived
+	 */
 	private boolean isSeatHoldArchivable(SeatHold seatHold) {
 		Instant now = Instant.now();
 		Duration d = Duration.between(seatHold.getHoldTime(), now);
 		return d.getSeconds() > seatHoldArchivalSeconds ? true : false;
 	}
 
+	/**
+	 * Returns boolean indicating if the seat hold is confirmed
+	 *
+	 * @param seatHold
+	 *            the SeatHold
+	 * @return a boolean indicating if the seat hold is confirmed
+	 */
 	private boolean isSeatHoldConfirmed(SeatHold seatHold) {
 		return seatHold.isConfirmed() ? true : false;
 	}
 
+	/**
+	 * Returns boolean indicating if the seat hold is expired
+	 *
+	 * @param seatHold
+	 *            the SeatHold
+	 * @return a boolean indicating if the seat hold is expired
+	 */
 	private boolean isSeatHoldExpired(SeatHold seatHold) {
 		Instant now = Instant.now();
 		Duration d = Duration.between(seatHold.getHoldTime(), now);
